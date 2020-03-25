@@ -28,7 +28,9 @@ void speedController() //linear model
 }
 
 
-//safety limiter
+// safety limiter
+// TODO position switches that trip when the carrage slides too far right or left
+// also used to "zero" the slider on init 
 void safetySwitch(){if ((steps > 351120) or (steps < 0)){ACTIVE = false;}}
 
 //setup
@@ -79,8 +81,9 @@ void setup()
 
 ISR( TIMER1_COMPA_vect )          // timer overflow interrupt service routine
 {
-  if (ACTIVE){           // check counter
-    digitalWrite(8, digitalRead(8) ^ 1);
+  if (ACTIVE) // check counter
+  {           
+    digitalWrite(plsPin, digitalRead(plsPin) ^ 1);
     steps++;
   }
 }
@@ -95,9 +98,7 @@ void loop()
   //while (steps < 12800){OCR1A = 12000;}
   OCR1A = spdDefault;
   delay(1000);
-  OCR1A = 100;
+  OCR1A = 300;
   delay(1000);
   
-
-
 }
