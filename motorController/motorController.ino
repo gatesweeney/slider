@@ -98,6 +98,8 @@ ISR( TIMER1_COMPA_vect )          // timer overflow interrupt service routine
 }
 
 
+int STATE = 0;
+
 void loop()
 {
   //if (OCR1A < 100){OCR1A = 100;}
@@ -110,13 +112,22 @@ void loop()
 //    OCR1A = 300;
 //    delay(1000);
 
-//  SPEED = 10;
-//  delay(1000);
+  if(STATE == 0){
+    SPEED = 0;
+    STATE++; 
+  }
+  else if(STATE == 1){
+    SPEED = 100;
+    STATE++;
+  }
+  else if(STATE == 2) {
+    SPEED = 50; 
+    STATE++;
+  }
+  else {
 
-//  SPEED = 100;
-//  delay(1000);
-//
-  SPEED = 50;
-  delay(1000);
+    STATE = 0;
+  }
   
+  delay(1000);
 }
