@@ -69,11 +69,11 @@ void setup()
 
   TCNT1 = 0;
   
-  OCR1A = 100;              // preload timer 2000000/100 = 20000 --> 10KHz
+  OCR1A = 100;              // reclaculate this
 
   TCCR1B |= (1 << WGM12);   // CTC mode
 
-  TCCR1B |= (1 << CS11);    // 8 prescaler 16000000/8 = 2000000
+  TCCR1B |= (1 << CS10);    // no prescaler
 
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
@@ -84,7 +84,7 @@ void setup()
 
 ISR( TIMER1_COMPA_vect )          // timer overflow interrupt service routine
 {
-
+//
   if (ACTIVE) // check counter
   {  
     if(count > SPEED){          
@@ -102,15 +102,6 @@ int STATE = 0;
 
 void loop()
 {
-  //if (OCR1A < 100){OCR1A = 100;}
-  //if (ACTIVE == false) {digitalWrite(mf, HIGH);}
-  //safetySwitch();
-  //set steps to zero
-  //while (steps < 12800){OCR1A = 12000;}
-//    OCR1A = spdDefault;
-//    delay(1000);
-//    OCR1A = 300;
-//    delay(1000);
 
   if(STATE == 0){
     SPEED = 0;
