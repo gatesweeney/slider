@@ -10,14 +10,17 @@
 #define mf 12
 #define mfGnd 13
 
-int count = 0;
+int SPEED = 0;
+int count = 0; //counting ticks taken so far
+
 int pls = 0;
 int pos = 0;
 int spdIn = 10; // 1 - 100
 int spdOut = 0; // counts
 int spdDefault = 500; // speed for actions not involving user (constant)
 int track = 3511200; // total steps on track (constant)
-int steps = 0; //steps taken so far
+
+
 
 bool ACTIVE;
 
@@ -31,7 +34,7 @@ void speedController() //linear model
 // safety limiter
 // TODO position switches that trip when the carrage slides too far right or left
 // also used to "zero" the slider on init 
-void safetySwitch(){if ((steps > 351120) or (steps < 0)){ACTIVE = false;}}
+//void safetySwitch(){if ((steps > 351120) or (steps < 0)){ACTIVE = false;}}
 
 //setup
 
@@ -66,11 +69,11 @@ void setup()
 
   TCNT1 = 0;
   
-  OCR1A = 500;            // preload timer 16000000/265/50 = 1250
+  OCR1A = 100;              // preload timer 2000000/100 = 20000 --> 10KHz
 
   TCCR1B |= (1 << WGM12);   // CTC mode
 
-  TCCR1B |= (1 << CS11);    // 256 prescaler 16000000/265 = 62500
+  TCCR1B |= (1 << CS11);    // 8 prescaler 16000000/8 = 2000000
 
   TIMSK1 |= (1 << OCIE1A);  // enable timer compare interrupt
 
@@ -81,10 +84,16 @@ void setup()
 
 ISR( TIMER1_COMPA_vect )          // timer overflow interrupt service routine
 {
+
   if (ACTIVE) // check counter
-  {           
-    digitalWrite(plsPin, digitalRead(plsPin) ^ 1);
-    steps++;
+  {  
+    if(count > SPEED){          
+      digitalWrite(plsPin, digitalRead(plsPin) ^ 1);
+      count = 0;
+    }
+    else {
+      count++;
+    }
   }
 }
 
@@ -96,9 +105,18 @@ void loop()
   //safetySwitch();
   //set steps to zero
   //while (steps < 12800){OCR1A = 12000;}
-  OCR1A = spdDefault;
-  delay(1000);
-  OCR1A = 300;
+//    OCR1A = spdDefault;
+//    delay(1000);
+//    OCR1A = 300;
+//    delay(1000);
+
+//  SPEED = 10;
+//  delay(1000);
+
+//  SPEED = 100;
+//  delay(1000);
+//
+  SPEED = 50;
   delay(1000);
   
 }
