@@ -55,6 +55,7 @@ void speedController() //linear model
 
 void setup()
 {
+  pinSetup();
   //motor status
   ACTIVEX = true;
   ACTIVEY = false;
