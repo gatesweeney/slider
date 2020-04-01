@@ -6,12 +6,12 @@
 #include <DueTimer.h>
 
 // x pins
-#define plsPinX 8
-#define plsGndX 9
-#define dirPinX 10
-#define dirGndX 11
-#define mfX 12
-#define mfGndX 13
+#define plsPinX 23
+#define plsGndX 25
+#define dirPinX 27
+#define dirGndX 29
+#define mfX 31
+#define mfGndX 33
 // y pins
 #define plsPinY 1
 #define plsGndY 1
@@ -20,12 +20,6 @@
 #define mfY 1
 #define mfGndY 1
 
-// isr variable
-int SPEEDX = 0;
-int COUNTX = 0; //counting ticks taken so far
-int SPEEDY = 0;
-int COUNTY = 0; //counting ticks taken so far
-
 // other variables
 int plsX = 0;
 int plsY = 0;
@@ -33,8 +27,16 @@ int posX = 0;
 int posY = 0;
 int spdIn = 10; // 1 - 100
 int spdOut = 0; // counts
-int spdDefault = 500; // speed for actions not involving user (constant)
+int spdDefault = 500000; // speed for actions not involving user (constant)
 int track = 3511200; // total steps on track (constant)
+
+// isr variable
+int SPEEDX = spdDefault;
+int COUNTX = 0; //counting ticks taken so far
+int SPEEDY = 0;
+int COUNTY = 0; //counting ticks taken so far
+
+
 
 bool ACTIVEX;
 bool ACTIVEY;
@@ -55,15 +57,17 @@ void speedController() //linear model
 
 void setup()
 {
+  delay(1000); // just chill for a sec so the motor doesn't start prematurely
   pinSetup();
   //motor status
-  ACTIVEX = true;
+  ACTIVEX = false;
   ACTIVEY = false;
+  
   // initialize X motor
-  Timer.getAvailable().attachInterrupt(motorControllerX).setFrequency(84000000).start();
+  Timer3.attachInterrupt(motorControllerX).start(10);
 
   // initialize Y motor
-  Timer.getAvailable().attachInterrupt(motorControllerY).setFrequency(84000000).start();
+  Timer4.attachInterrupt(motorControllerY).start(10);
 
   //get initial speed
   speedController();
@@ -79,7 +83,6 @@ void motorControllerX()          // timer overflow interrupt service routine
     if(COUNTX > SPEEDX){          
       digitalWrite(plsPinX, digitalRead(plsPinX) ^ 1);
       COUNTX = 0;
-      if (digitalRead(dirPinX) == LOW) {posX --;} else {posX ++;}
     }
     else {
       COUNTX++;
@@ -92,10 +95,9 @@ void motorControllerY()          // timer overflow interrupt service routine
 
   if (ACTIVEY) // check counter
   {  
-    if(COUNTY > SPEEDX){          
+    if(COUNTY > SPEEDY){          
       digitalWrite(plsPinY, digitalRead(plsPinY) ^ 1);
       COUNTY = 0;
-      if (digitalRead(dirPinY) == LOW) {posY --;} else {posY ++;}
     }
     else {
       COUNTY++;
@@ -105,7 +107,9 @@ void motorControllerY()          // timer overflow interrupt service routine
 
 void loop()
 {
-
+  SPEEDX = 700;
+  Serial.println(posX);
+  Serial.println(COUNTX);
 }
 
 
@@ -135,6 +139,6 @@ void pinSetup() {
   digitalWrite(plsGndY, LOW);
   digitalWrite(mfY, LOW);
   digitalWrite(mfGndY, LOW);
-  Serial.begin(115200);
+  Serial.begin(2000000);
 
 }
