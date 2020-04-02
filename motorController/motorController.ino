@@ -38,8 +38,8 @@ int COUNTY = 0; //counting ticks taken so far
 
 
 
-bool ACTIVEX;
-bool ACTIVEY;
+volatile boolean ACTIVEX;
+volatile boolean ACTIVEY;
 
 void speedController() //linear model
 {
@@ -60,7 +60,7 @@ void setup()
   delay(1000); // just chill for a sec so the motor doesn't start prematurely
   pinSetup();
   //motor status
-  ACTIVEX = false;
+  ACTIVEX = true;
   ACTIVEY = false;
   
   // initialize X motor
