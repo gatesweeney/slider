@@ -4,6 +4,7 @@
 
 //Libraries
 #include <DueTimer.h>
+#include <Encoder.h>
 
 // x pins
 #define plsPinX 23
@@ -36,15 +37,14 @@ int COUNTX = 0; //counting ticks taken so far
 int SPEEDY = 0;
 int COUNTY = 0; //counting ticks taken so far
 
-
+Encoder myEnc(2,4);
 
 volatile boolean ACTIVEX;
 volatile boolean ACTIVEY;
 
 void speedController() //linear model
 {
-  // spdIn = 10;
-  spdOut = 1;
+  SPEEDX = spdIn + 10;
 }
 
 
@@ -74,6 +74,17 @@ void setup()
 
 }
 
+// encoder
+long oldPosition  = -999;
+void spdWheel() {
+  long newPosition = myEnc.read();
+  if (newPosition != oldPosition) {
+    oldPosition = newPosition;
+  }
+  if (newPosition < 0) {newPosition = 0; oldPosition = 0;} else if (newPosition > 1000) {newPosition = 1000; oldPosition = 1000;}
+  spdIn = newPosition;
+}
+
 
 void motorControllerX()          // timer overflow interrupt service routine
 {
@@ -81,8 +92,9 @@ void motorControllerX()          // timer overflow interrupt service routine
   if (ACTIVEX) // check counter
   {  
     if(COUNTX > SPEEDX){          
-      digitalWrite(plsPinX, digitalRead(plsPinX) ^ 1);
+      digitalWrite(plsPinX, HIGH);
       COUNTX = 0;
+      digitalWrite(plsPinX, LOW );
     }
     else {
       COUNTX++;
@@ -107,9 +119,9 @@ void motorControllerY()          // timer overflow interrupt service routine
 
 void loop()
 {
-  SPEEDX = 700;
-  Serial.println(posX);
-  Serial.println(COUNTX);
+  spdWheel();
+  speedController();
+  
 }
 
 
@@ -139,6 +151,6 @@ void pinSetup() {
   digitalWrite(plsGndY, LOW);
   digitalWrite(mfY, LOW);
   digitalWrite(mfGndY, LOW);
-  Serial.begin(2000000);
+  Serial.begin(9600);
 
 }
