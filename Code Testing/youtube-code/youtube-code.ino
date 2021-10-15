@@ -17,7 +17,7 @@
 #define inLED 8
 #define outLED 9
 // Define the stepper motors and the pins the will use
-AccelStepper stepper1(1, 7, 6); // (Type:driver, STEP, DIR)
+AccelStepper stepper1(1, 2, 4); // (Type:driver, STEP, DIR)
 AccelStepper stepper2(1, 5, 4);
 AccelStepper stepper3(1, 3, 2);
 MultiStepper StepperControl;  // Create instance of MultiStepper
