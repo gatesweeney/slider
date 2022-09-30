@@ -28,7 +28,7 @@ int posX = 0;
 int posY = 0;
 int spdIn = 10; // 1 - 100
 int spdOut = 0; // counts
-int spdDefault = 500000; // speed for actions not involving user (constant)
+int spdDefault = 100000; // speed for actions not involving user (constant)
 int track = 3511200; // total steps on track (constant)
 
 // isr variable
@@ -43,9 +43,9 @@ volatile boolean ACTIVEX;
 volatile boolean ACTIVEY;
 
 void speedController() //linear model
-{
-  SPEEDX = spdIn + 10;
-}
+  {
+    SPEEDX = spdIn + 10;
+  }
 
 
 // safety limiter
